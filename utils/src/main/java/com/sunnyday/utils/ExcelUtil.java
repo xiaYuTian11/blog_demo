@@ -345,12 +345,12 @@ public class ExcelUtil {
 
         if ("String".equals(fieldType)) {
             if (isConvert) {
-                return map.get(cell.getStringCellValue());
+                return map.get(value);
             }
-            return cell.getStringCellValue();
+            return value;
         } else if ("Date".equals(fieldType)) {
             if (CellType.NUMERIC.equals(cellType) && DateUtil.isCellDateFormatted(cell)) {
-                return DateUtil.getJavaDate(Double.parseDouble(cell.getStringCellValue()));
+                return DateUtil.getJavaDate(Double.parseDouble(value));
             } else {
                 if (StrUtil.isBlank(value)) {
                     return null;
@@ -378,7 +378,7 @@ public class ExcelUtil {
         } else if ("double".equals(fieldType) || "Double".equals(fieldType)) {
             return Double.parseDouble(value);
         } else if ("boolean".equals(fieldType) || "Boolean".equals(fieldType)) {
-            return "是".equals(value) ? 1 : 0;
+            return "是".equals(value);
         } else if ("Long".equals(fieldType) || "long".equals(fieldType)) {
             return Long.parseLong(value);
         } else if ("Object[]".equals(fieldType)) {
@@ -393,13 +393,13 @@ public class ExcelUtil {
     }
 
     /**
-     * 数据校核
+     * 数据校核并设置备注
      *
      * @param file          文件
      * @param excelRuleList 校验规则
      * @return
      */
-    public static List<CheckResult> checkExcelAndWriter(File file, List<ExcelRule> excelRuleList) throws Exception {
+    public static List<CheckResult> checkExcelWithComment(File file, List<ExcelRule> excelRuleList) throws Exception {
         int count = 0;
         Workbook workbook = getWorkbook(getFileType(file.getName()), file);
         OutputStream out = new FileOutputStream(file);
@@ -463,7 +463,7 @@ public class ExcelUtil {
                                 String errorMsg = getCheckMessage(cell, ruleList);
                                 // 设置备注
                                 if (StrUtil.isNotBlank(errorMsg)) {
-                                    checkResultList.add(new CheckResult(index, rowNum, cellNum, errorMsg));
+                                    checkResultList.add(new CheckResult(index, i, cellNum, errorMsg));
                                     setComment(sheet, cell, errorMsg, cellStyle);
                                 }
                             }
@@ -474,7 +474,7 @@ public class ExcelUtil {
                                 String errorMsg = getCheckMessage(cell, ruleList);
                                 // 设置备注
                                 if (StrUtil.isNotBlank(errorMsg)) {
-                                    checkResultList.add(new CheckResult(index, rowNum, cellNum, errorMsg));
+                                    checkResultList.add(new CheckResult(index, i, cellNum, errorMsg));
                                     setComment(sheet, cell, errorMsg, cellStyle);
                                 }
                             }
@@ -511,7 +511,6 @@ public class ExcelUtil {
         return cellStyle;
     }
 
-
     /**
      * 写入错误提示
      *
@@ -530,34 +529,6 @@ public class ExcelUtil {
         }
 
         return StrUtil.join(",", errorMsg);
-    }
-
-    /**
-     * 校验规则
-     *
-     * @return
-     */
-    private static boolean checkRule(Cell cell, Rule rule) {
-        if (Rule.NOT_BLANK.equals(rule)) {
-            if (cell.getCellType().equals(CellType.STRING)) {
-                return StrUtil.isNotBlank(cell.getStringCellValue());
-            } else if (cell.getCellType().equals(CellType.BLANK)) {
-                return false;
-            } else if (CellType.NUMERIC.equals(cell.getCellType())) {
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    // 时间格式
-                    return Objects.nonNull(cell.getDateCellValue());
-                } else {
-                    // 数字
-                    return true;
-                }
-            } else if (CellType.BOOLEAN.equals(cell.getCellType())) {
-                return true;
-            } else {
-                return true;
-            }
-        }
-        return true;
     }
 
     /**

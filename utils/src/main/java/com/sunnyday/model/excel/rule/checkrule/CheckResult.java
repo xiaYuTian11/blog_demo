@@ -2,6 +2,7 @@ package com.sunnyday.model.excel.rule.checkrule;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * 校核结果
@@ -10,6 +11,7 @@ import lombok.Data;
  * @since 2020/11/29 12:32
  */
 @Data
+@ToString
 @AllArgsConstructor
 public class CheckResult {
     /**
