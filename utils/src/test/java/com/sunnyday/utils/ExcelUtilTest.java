@@ -5,6 +5,7 @@ import com.sunnyday.model.excel.rule.SheetRule;
 import com.sunnyday.model.excel.rule.checkrule.CheckResult;
 import com.sunnyday.model.excel.rule.checkrule.Rule;
 import com.sunnyday.utils.excel.User;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,6 +17,13 @@ import java.util.Objects;
  * @since 2020/11/29 13:47
  */
 class ExcelUtilTest {
+    @BeforeAll
+    static void printVersion() {
+        System.out.println(System.getProperty("user.home"));
+        System.out.println(System.getProperty("java.version"));
+        System.out.println(System.getProperty("os.name"));
+        System.out.println(System.getProperty("java.vendor.url"));
+    }
 
     @org.junit.jupiter.api.Test
     void readExcel() throws Exception {
